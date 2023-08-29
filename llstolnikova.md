@@ -2,9 +2,10 @@
 
 Ключевые узлы компьютера:
 
-- Процессор Intel Core i5-13400
-- Материнская MSI PRO B760m-E"
-- SSD Netac
+- Процессор Intel Core i5-13400 Raptor Lake-S (2500MHz/LGA1700/L3 20480Kb) 
+- Материнская плата MSI Pro B760M-E DDR4                
+- Твердотельный накопитель Netac NV7000 Series M.2 1Tb NT01NV7000-1T0-E4X
+- Модуль памяти Corsair Vengeance RGB Pro DDR4 3200MHz PC4-25600 CL16 - 32Gb KIT (2x16Gb) CMH32GX4M2E3200C16
 
 Основная проблема после сборки - материнская плата не видит диск M2.
 
