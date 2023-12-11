@@ -138,3 +138,33 @@ fffffe05`34bda9e0 00007ffc`b4192a84     : 00000000`00000000 00000000`00000000 00
 SMSs - это аббревиатура от **S**essions **M**anager **S**ubsystem. Программа Session Manager Subsystem отвечает за все виды деятельности, связанные с запуском, обработкой и заканчивая пользовательскими сеансами в ОС Windows версии 2000 и последующих. Она вызывает процедуры Windows Logon (winlogon) и Client/Server Runtime Service (csrss). Она также работает с клиентскими сеансами в службах терминалов (Terminal Services). Она является основной частью операционной системы и не должна отключаться.
 
 Поскольку зависания возникают после работы Bootloader-а и часто появляется частично прорисованное окно ввода логина/пароля, то сбой в SMSS вероятен.
+
+Рекомендуется к ознакомлению [статья](https://learn.microsoft.com/ru-ru/troubleshoot/windows-client/performance/windows-boot-issues-troubleshooting).
+
+Повторно запустил команду:
+
+```shell
+sfc /scannow
+```
+
+Утилита сообщила о корректировке ошибок и сформировала файл с логами "C:\Windows\Logs\CBS\CBS.log". Идентифицированные ошибки:
+
+```
+2023-12-08 21:59:01, Error                        0x80070490 in WinREAgent::WinREServicingManager::InternalLoad (base\diagnosis\srt\winreagent\dll\winreservicingmanager.cpp:1020): [C:\$WinREAgent\WinREServicingManager.xml] doesn't exist, there is no servicing manager suspended[gle=0x00000002]
+2023-12-08 21:59:01, Error                        0x80070490 in WinREAgent::WinREServicingManager::Load (base\diagnosis\srt\winreagent\dll\winreservicingmanager.cpp:977): Failed to load servicing manager[gle=0x00000002]
+2023-12-08 21:59:01, Error                        0x80070490 in WinREAgent::LoadWinREServicingManager (base\diagnosis\srt\winreagent\dll\winreagent.cpp:98): Failed to load servicing manager
+...
+2023-12-08 21:59:02, Info                  CBS    Reporting package change completion for package: Package_for_RollupFix~31bf3856ad364e35~amd64~~22621.2792.1.22, current: Installed, original: Staged, target: Installed, status: 0x0, failure source: Not Applicable, failure details: "(null)", client id: UpdateAgentLCU, initiated offline: False, execution sequence: 239, first merged sequence: 239, pending decision: PackagePended_NoSmartPendingFlagSet, primitive execution context: Shutdown 
+2023-12-08 21:59:02, Info                  CBS    The store corruption status report is incomplete. [HRESULT = 0x80070002 - ERROR_FILE_NOT_FOUND]
+...
+2023-12-08 22:14:14, Info                  CBS    Failed to get visibility for package: Microsoft-Windows-Kernel-LA57-FoD-Package~31bf3856ad364e35~amd64~~10.0.22621.1 [HRESULT = 0x80070490 - ERROR_NOT_FOUND]
+2023-12-08 22:14:14, Info                  CBS    Appl: Evaluating package applicability for package Microsoft-Windows-Kernel-LA57-FoD-Package~31bf3856ad364e35~amd64~~10.0.22621.1, applicable state: Installed
+...
+2023-12-08 22:18:56, Info                  CBS    Failed to get visibility for package: Microsoft-Windows-Kernel-LA57-FoD-Package~31bf3856ad364e35~amd64~~10.0.22621.1 [HRESULT = 0x80070490 - ERROR_NOT_FOUND]
+2023-12-08 22:18:56, Info                  CBS    Failed to load package: Microsoft-Windows-Kernel-LA57-FoD-Package~31bf3856ad364e35~amd64~~10.0.22621.1 [HRESULT = 0x80070002 - ERROR_FILE_NOT_FOUND]
+2023-12-08 22:18:56, Info                  CBS    Failed to read manifest content. [HRESULT = 0x80070002 - ERROR_FILE_NOT_FOUND]
+2023-12-08 22:18:56, Info                  CBS    Failed checking if package is deeply superseded:  [Microsoft-Windows-Kernel-LA57-FoD-Package~31bf3856ad364e35~amd64~~10.0.22621.1] [HRESULT = 0x80070002 - ERROR_FILE_NOT_FOUND]
+2023-12-08 22:18:56, Info                  CBS    Failed to collect packages from package store [HRESULT = 0x80070002 - ERROR_FILE_NOT_FOUND]
+2023-12-08 22:18:56, Info                  CBS    Failed to enumerate installed package. [HRESULT = 0x80070002 - ERROR_FILE_NOT_FOUND]
+2023-12-08 22:18:56, Info                  CBS    Failed to EnumeratePackages using worker session [HRESULT = 0x80070002]
+```
