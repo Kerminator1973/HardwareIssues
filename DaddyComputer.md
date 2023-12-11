@@ -102,3 +102,39 @@ _CR3 = 0 K
 Также рекомендуется сбросить BIOS до стандартных настроек.
 
 Максим рекомендует отключить Wi-Fi адаптер для того, чтобы гарантировать, что _Real-Time Clock_ работает. При включенном Wi-Fi-адаптере, операционная система может синхронизовать время через Интернет.
+
+**Экспериментальная проверка**: сброс питания и отключение Wi-Fi модуля не привели к прекращению зависания компьютера на процедуре Logon. Однако, при отсутствии Интернета, система показала правильный часовой пояс, но фактическое время на три часа меньше, чем было в действительности. Из-за какого-то глюка три часа "потерялись". При подключении Wi-Fi модуля, был запущен процесс синхронизации времени через интернет, который успешно скорректировал время.
+
+В системной папке (%SystemRoot%\LiveKernelReports) был обнаружен ряд папок, в которых находились dmp-файлы: "\WHEA\WHEA-20231126-1801.dmp" и "\WHEA\WHEA-20231130-1959.dmp". Для анализа этих файлов потребовалось установить утилиту **WinDbg**, которую я скачал с сайта Microsoft (Debugging Tools for Windows из набора Software Development Kit (SDK)). Приложение было установлено в папку `c:\Program Files (x86)\Windows Kits\10\Debuggers\x64\windbg.exe`.
+
+В dmp-файлах есть следующая информация (WHEA-20231126-1801.dmp):
+
+```log
+WHEA_UNCORRECTABLE_ERROR (124)
+A fatal hardware error has occurred. Parameter 1 identifies the type of error
+source that reported the error. Parameter 2 holds the address of the
+nt!_WHEA_ERROR_RECORD structure that describes the error condition. Try !errrec Address of the nt!_WHEA_ERROR_RECORD structure to get more details.
+Arguments:
+Arg1: 0000000000000007, BOOT Error
+Arg2: ffff880f6f4ab020, Address of the nt!_WHEA_ERROR_RECORD structure.
+Arg3: 0000000000000000
+Arg4: 0000000000000000
+
+
+PROCESS_NAME:  smss.exe
+
+STACK_TEXT:  
+fffffe05`34bd9e30 fffff804`7d8071f7     : ffff880f`6f4ab000 00000000`00000000 ffff880f`6f4ab020 000000b4`a98ff498 : nt!LkmdTelCreateReport+0x1d4
+fffffe05`34bda370 fffff804`7d8070ee     : ffff880f`6f4ab000 fffffe05`34bdaa60 00000000`00000000 00000000`00000000 : nt!WheapReportLiveDump+0x7b
+fffffe05`34bda3b0 fffff804`7d650195     : 00000000`00000001 fffffe05`34bdaa60 00000000`00000000 00000000`00000000 : nt!WheapReportDeferredLiveDumps+0x7a
+fffffe05`34bda3e0 fffff804`7d54fde1     : 00000000`00000000 00000000`00000000 00000000`00000001 fffff804`813aa22c : nt!WheaCrashDumpInitializationComplete+0x59
+fffffe05`34bda410 fffff804`7d22b6e5     : ffff880f`76593080 00000000`00000000 00000000`0000022c 00000000`00000001 : nt!NtSetSystemInformation+0x971
+fffffe05`34bda9e0 00007ffc`b4192a84     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : nt!KiSystemServiceCopyEnd+0x25
+000000b4`a98ff438 00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : 0x00007ffc`b4192a84
+```
+
+Второй файл ("\WHEA\WHEA-20231130-1959.dmp") содержит ту же самую информацию.
+
+SMSs - это аббревиатура от **S**essions **M**anager **S**ubsystem. Программа Session Manager Subsystem отвечает за все виды деятельности, связанные с запуском, обработкой и заканчивая пользовательскими сеансами в ОС Windows версии 2000 и последующих. Она вызывает процедуры Windows Logon (winlogon) и Client/Server Runtime Service (csrss). Она также работает с клиентскими сеансами в службах терминалов (Terminal Services). Она является основной частью операционной системы и не должна отключаться.
+
+Поскольку зависания возникают после работы Bootloader-а и часто появляется частично прорисованное окно ввода логина/пароля, то сбой в SMSS вероятен.
