@@ -77,11 +77,11 @@ sudo dnf upgrade
 /usr/bin/python3 /usr/bin/update_applet
 ```
 
-Можно выполнять обновления вручную:
+Можно выполнять обновления вручную (из консоли):
 
 ```shell
-/usr/bin/update_applet check
-/usr/bin/update_applet refresh
-/usr/bin/update_applet listupd
-/usr/bin/update_applet update
+/usr/bin/update_applet.helper check
+/usr/bin/update_applet.helper refresh
+/usr/bin/update_applet.helper listupd
+/usr/bin/update_applet.helper update
 ```
