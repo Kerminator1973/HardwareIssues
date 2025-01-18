@@ -39,11 +39,33 @@ dnfdragora
 
 ## Попытки решения Проблемы
 
+По всем признакам, проблемы на ноутбуку с М ОС связаны с `plasmashell`.
+
 Команда `plasmashell --replace` привела к выдаче следующей информации:
 
 ```output
 Invalid corona package metadata
 Could not set containment property on rootObject
+```
+
+Запустив утилиту `htop` можно найти процесс plasmashell и удалить его (F9, Enter). Затем можно снова попытаться запустить plasmashell командой:
+
+```shell
+plasmashell &
+```
+
+Амперсанд в конце команды позволяет дождаться её завершения, а точнее - увидеть сообщения об ошибке.
+
+Логов с ошибками, связанными с plasmashell довольно много:
+
+```shell
+journalctl -xe | grep plasmashell
+```
+
+Одна из потенциально важных проблем:
+
+```shell
+Aborting shell load: The activity manager daemon (kactivitymanagerd) is not running.
 ```
 
 Попробовал проверить состояние видео-карты:
