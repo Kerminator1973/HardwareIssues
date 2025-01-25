@@ -44,8 +44,30 @@ dnfdragora
 Команда `plasmashell --replace` привела к выдаче следующей информации:
 
 ```output
-Invalid corona package metadata
-Could not set containment property on rootObject
+plasmashell[1432]: Invalid corona package metadata
+plasmashell[1432]: Could not set containment property on rootObject
+```
+
+В общем случае, эта проблема может быть связана с описание темы, одна из которых находится в папке `/usr/share/plasma/desktoptheme/`. Скорее всего, какие-то из тем содержат ошибки в конфигурации и именно из-за этого появляются ошибки в журнале аудита.
+
+Но более серьёзной проблемой выглядит вот это сообщение об ошибке:
+
+```output
+plasmashell[1432]: The Wayland connection broke. Did the Wayland compositor die?
+```
+
+Почитать логи kwin можно командой:
+
+```shell
+journalctl -xe | grep kwin
+```
+
+И в этих логах можно найти следующие сообщения:
+
+```output
+kwin_wayland_wrapper[1326]: (EE) failed to read Wayland events: Connection reset by peer
+kwin_wayland_wrapper[1326]: (EE) failed to read Wayland events: Broken pipe
+kwin_wayland[1284]: QtDBus: cannot relay signals from parent QObject(0x1a1d150 "") unless they are emitted in the object's thread QThread(0x18b3ef8 "libinput-connection"). Current thread is QThread(0x18433c0 "").
 ```
 
 Запустив утилиту `htop` можно найти процесс plasmashell и удалить его (F9, Enter). Затем можно снова попытаться запустить plasmashell командой:
@@ -185,7 +207,17 @@ startkde: Done
 journalctl -b | grep -i "error\|fail\|warn"
 ```
 
-В журнале аудита есть несколько записей о сбое в работе системы, но они не выглядят действительно важными.
+Важно отметить, что поскольку пользователь (teacher) не входит в группу администраторов "adm", то отображаются только те записи в журнале, которые были сделаны при запуске приложений из под учётной записи текущего пользователя.
+
+В журнале аудита есть несколько записей о сбое в работе системы, и вот некоторые из сообщений об ошибках:
+
+```output
+kwin_wayland_wrapper[1354]: Errors from xkbcomp are not fatal to the X server
+xdg-desktop-por[1291]: Failed connect to PipeWire: Couldn't create PipeWire main loop
+systemd[1167]: app=hplip\x2dsystray@autostart.service: Main process exited, code=exited, status=1/FAILURE
+```
+
+xkbcomp - отвечает за раскладку клавиатуры. PipeWire - это аналог PulseAudio и JACK - отвечает за работу аудио. hplip - похоже на сервис, связанные с драйверами принтеров HP. Т.е. эти сообщения не выглядят реальными проблемами.
 
 ## Что доступно в дистрибутиве M OS 12?
 
