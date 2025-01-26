@@ -219,6 +219,16 @@ systemd[1167]: app=hplip\x2dsystray@autostart.service: Main process exited, code
 
 xkbcomp - отвечает за раскладку клавиатуры. PipeWire - это аналог PulseAudio и JACK - отвечает за работу аудио. hplip - похоже на сервис, связанные с драйверами принтеров HP. Т.е. эти сообщения не выглядят реальными проблемами.
 
+Если смотреть не только на сообщения времени загрузки, а использовать команду `journalctl -xe | grep -i "error\|fail\|warn"`, то можно увидеть сообщения:
+
+```
+The unit UNIT was skipped due to an ExecutionCondition= command failure, and has
+...
+The unit UNIT has entered the 'failed' state with result 'exit-code'.`
+```
+
+Это значит, что не были запущены некоторые сервисы исходя из условий запуска. За запуск этих сервисов отвечает systemd.
+
 ## Что доступно в дистрибутиве M OS 12?
 
 Работают следующие комбинации клавиш:
