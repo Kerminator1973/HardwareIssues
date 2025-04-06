@@ -50,6 +50,8 @@ plasmashell[1432]: Could not set containment property on rootObject
 
 В общем случае, эта проблема может быть связана с описание темы, одна из которых находится в папке `/usr/share/plasma/desktoptheme/`. Скорее всего, какие-то из тем содержат ошибки в конфигурации и именно из-за этого появляются ошибки в журнале аудита.
 
+Следует заметить, что часть тем содержит файлы с метаданными "metadata.desktop" (формат данных - ini), а часть - "metadata.json". Я доустанавливал темы (oxygen и air) - их не видно в режиме "Оформление рабочей среды", но они есть в "Оформлении рабочего стола". Удалить темы вручную, или через графический пользовательский интерфейс система не даёт.
+
 Но более серьёзной проблемой выглядит вот это сообщение об ошибке:
 
 ```output
@@ -68,6 +70,12 @@ journalctl -xe | grep kwin
 kwin_wayland_wrapper[1326]: (EE) failed to read Wayland events: Connection reset by peer
 kwin_wayland_wrapper[1326]: (EE) failed to read Wayland events: Broken pipe
 kwin_wayland[1284]: QtDBus: cannot relay signals from parent QObject(0x1a1d150 "") unless they are emitted in the object's thread QThread(0x18b3ef8 "libinput-connection"). Current thread is QThread(0x18433c0 "").
+```
+
+Если просто запустить команду `journalctl -xe` без выделения строк с kwin, то можно увидеть, что journalctl выводит данные только для текущего пользователя, скрывая сообщения от системных процессов. И в логах есть ошибки при работе Qt:
+
+```output
+Qt Quick Layouts: Detected recursive rearrange. Aborting after two interations.
 ```
 
 Запустив утилиту `htop` можно найти процесс plasmashell и удалить его (F9, Enter). Затем можно снова попытаться запустить plasmashell командой:
