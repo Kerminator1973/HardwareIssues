@@ -291,3 +291,7 @@ Gemini:
 - Could not set containment property on rootObject: This is a direct consequence of the first error. Because Plasma couldn't read the metadata for your desktop layout, it failed to apply that layout ("containment") to the screen ("rootObject"). The result is a failure to draw anything, which is the black screen you are seeing.
 
 К сожалению, дальнейшие советы также не помогли - я по прежнему имею "Invalid corona package metadata".
+
+## Победа!
+
+В конце июня 2025 года, после удаления и пересоздания конфигурационных файлов, а также после обновления компонентов операционной системы, проблема с Plasmashell была успешно решена. Система вернулась в состояние удобное для использования. Без **sudoer**!
