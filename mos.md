@@ -244,3 +244,50 @@ The unit UNIT has entered the 'failed' state with result 'exit-code'.`
 - Ctrl + Alt + F1 = графическая консоль Wayland
 - Ctrl + Alt + F2 = графическая консоль X11 (не точно). Заблокирована, если активирован Wayland
 - Ctrl + Alt + F3 = текстовая консоль Linux
+
+## Что подсказывает Google Gemini 2.5 Pro
+
+Мой промпт: "I use a computer with installed Mandrive based Linux system. My desktop environment is KDE Plasma. I am not a sudoer in the system. After OS update my background desktop and task bar gone. I can run apps, but instead of the task bar and the background task I have a black screen. How can I fix that?"
+
+Gemini: _That sounds very frustrating. The good news is that since you can still launch applications, the core of your system and the window manager are likely working correctly. The problem you're describing almost certainly points to a crashed or misconfigured **KDE Plasma Shell**. This is the process responsible for drawing your desktop background, the taskbar (panel), and your widgets._
+
+Gemini: _Your primary tool to fix this will be **KRunner**, the command launcher._
+
+**KRunner** запускается клавишами `Alt+F2` и это именно тот инструмент, который я использую для запуска приложений.
+
+Gemini предложил удалить cache Plasmashell:
+
+```shell
+rm -rf ~/.cache/plasmashell*
+rm -rf ~/.cache/org.kde.plasma*
+rm -rf ~/.cache/ksycoca5*
+```
+
+А затем пересоздать настройки Plasmashell:
+
+```shell
+mv ~/.config/plasma-org.kde.plasma.desktop-appletsrc ~/.config/plasma-org.kde.plasma.desktop-appletsrc.bak
+mv ~/.config/plasmashellrc ~/.config/plasmashellrc.bak
+```
+
+Выйти из клиентской сессии можно командой:
+
+```shell
+qdbus org.kde.ksmserver /KSMServer logout 0 0 0
+```
+
+На самом деле, всё это я уже делал и это мне не помогло.
+
+Вот как Gemini объясняет следующие ошибки:
+
+```output
+plasmashell[1432]: Invalid corona package metadata
+plasmashell[1432]: Could not set containment property on rootObject
+```
+
+Gemini:
+
+- Invalid corona package metadata: In KDE Plasma's internal language, "Corona" is the engine that renders the desktop itself—the wallpaper and the container that holds your widgets and panels. A "package" in this context refers to your desktop layout. This error means the file that defines your desktop layout (what panels you have, where they are, what widgets are on the desktop, etc.) is corrupted, from an older version, or otherwise unreadable.
+- Could not set containment property on rootObject: This is a direct consequence of the first error. Because Plasma couldn't read the metadata for your desktop layout, it failed to apply that layout ("containment") to the screen ("rootObject"). The result is a failure to draw anything, which is the black screen you are seeing.
+
+К сожалению, дальнейшие советы также не помогли - я по прежнему имею "Invalid corona package metadata".
