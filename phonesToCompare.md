@@ -6,9 +6,9 @@
 GPU: Adreno 642
 Выпуск: 2021
 
-- 1 ядро Kryo 670 Prime (Cortex-A78) на 2400 МГц
-- 3 ядра Kryo 670 Gold (Cortex-A78) на 2400 МГц
-- 4 ядра Kryo 670 Silver (Cortex-A55) на 1800 МГц.
+- 1 ядро Kryo 670 Prime (Cortex-A78) на 2400 МГц (разгоняется до 2960 МГц)
+- 3 ядра Kryo 670 Gold (Cortex-A78) на 2400 МГц (не разгоняется)
+- 4 ядра Kryo 670 Silver (Cortex-A55) на 1800 МГц
 
 ## realme 9 Pro 5G (старый отца) - июль 2022
 
